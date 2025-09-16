@@ -42,7 +42,8 @@ on:
     types: [opened, ready_for_review, reopened, synchronize]
   push:
     branches:
-      - main
+      - hengxian-jiang/npm_pkg_pub
+      - release/v1.14.5
 
 env:
   GIT_BRANCH_NAME: ${{ github.event.inputs.GIT_BRANCH_NAME || github.head_ref || github.ref_name }}
@@ -107,7 +108,7 @@ jobs:
 
       - name: Publish Package
         env:
-          SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' }}
+          SHOULD_PUBLISH: ${{ github.event_name == 'workflow_dispatch' || github.ref_name == 'hengxian-jiang/npm_pkg_pub' || github.ref_name == 'release/v1.14.5' }}
         run: |
           if [[ "${SHOULD_PUBLISH}" == "true" ]]; then
             npm publish --registry "${NPM_PUBLISH_REGISTRY}"
