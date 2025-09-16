@@ -1,5 +1,5 @@
 {
-  "name": "supa-storage",
+  "name": "@data2evidence/storage",
   "version": "1.11.2",
   "description": "Supabase Storage Service",
   "main": "index.js",
