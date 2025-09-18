@@ -113,7 +113,9 @@
     "ts-node-dev": "^1.1.8",
     "tsx": "^4.16.0",
     "tus-js-client": "^3.1.0",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "@data2evidence/trex": "latest",
+    "deno": "2.1.13"
   },
   "bin": "./dist/server.js"
 }
