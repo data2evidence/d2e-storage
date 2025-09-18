@@ -160,7 +160,7 @@ export function setEnvPaths(paths: string[]) {
 }
 
 export function mergeConfig(newConfig: Partial<StorageConfigType>) {
-  config = { ...config, ...(newConfig as Required<StorageConfigType>) }
+  config = { ...(config ?? ({} as StorageConfigType)), ...((newConfig ?? {}) as Required<StorageConfigType>) }
 }
 
 export function getConfig(options?: { reload?: boolean }): StorageConfigType {

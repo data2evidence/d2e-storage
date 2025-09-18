@@ -2,7 +2,7 @@
   "name": "@data2evidence/storage",
   "version": "1.11.2",
   "description": "Supabase Storage Service",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/start/server.ts | pino-pretty",
     "build": "node ./build.js && resolve-tspaths",
@@ -124,5 +124,7 @@
     "tus-js-client": "^3.1.0",
     "typescript": "5.2.2"
   },
-  "bin": "./dist/server.js"
+  "bin": {
+    "storage": "./dist/start/server.js"
+  }
 }
