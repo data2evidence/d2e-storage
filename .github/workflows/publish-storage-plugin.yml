@@ -82,6 +82,13 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [check_file_changes]
     if: (github.ref_name == 'develop' || startsWith(github.ref_name, 'release/') || github.ref_name == 'hengxian-jiang/npm_pkg_pub' || github.ref_name == 'release/v1.14.5' || github.event_name == 'workflow_dispatch') || ( github.event_name == 'pull_request' && !github.event.pull_request.draft && needs.check_file_changes.outputs.changed == 'true' )
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - PKGPATH: ./
+            DESTPATH: /usr/src/data/plugins/node_modules/@data2evidence/storage
+            NPM: npm
 
     steps:
       - name: Checkout
@@ -99,10 +106,30 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@data2evidence"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Deno and preinstall Trex deps (if DESTPATH)
+        if: ${{ matrix.DESTPATH }}
+        run: |
+          npm install -g deno@2.1.13
+          export PATH="$(npm root -g)/deno/bin:$PATH"
+          denover="$(deno --version | grep deno | awk '{print $2}')"
+          echo "Deno version: $denover"
+          denover_expected="2.1.13"
+          if [ "$denover" != "$denover_expected" ]; then
+            echo "Error: Deno version is $denover, expected $denover_expected"
+            exit 1
+          fi
+          cd ${{ matrix.PKGPATH }}
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NPM_PROJECT_TOKEN}" >> ./.npmrc
+          deno install --allow-scripts
+          node ./install-deno-deps.js ${{ matrix.PKGPATH }} || true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_PROJECT_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
+
+      - name: Install Node dependencies
+        run: npm ci --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
 
       - name: Update version
         run: |
@@ -118,6 +145,24 @@ jobs:
 
       - name: Ensure package is publishable
         run: jq '.private=false' package.json > tmppkg && mv tmppkg package.json
+
+      - name: Prepare DEST (Trex layout) and build with Trex
+        if: ${{ matrix.DESTPATH }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
+        run: |
+          cd ${{ matrix.PKGPATH }}
+          cp package.json package.org.json
+          sudo mkdir -p ${{ matrix.DESTPATH }}
+          sudo chown runner:docker ${{ matrix.DESTPATH }}
+          cp -a . ${{ matrix.DESTPATH }}
+          cd ${{ matrix.DESTPATH }}
+          export TREX_DOCKER_TAG=sha256:468f1fa411b288f8ebac842dc0982bb7b8cb2d5eeb8dc25a494b734fcacfac42
+          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
+          npm i @data2evidence/trex
+          npm run trex_build || true
 
       - name: Select publish registry - OSS Develop
         if: env.NPM_ARTIFACT_TYPE == 'OSS-develop'
@@ -143,9 +188,15 @@ jobs:
       - name: Publish
         env:
           SHOULD_PUBLISH: ${{ github.ref_name == 'develop' || startsWith(github.ref_name, 'release/') || github.event_name == 'workflow_dispatch' || github.ref_name == 'hengxian-jiang/npm_pkg_pub' || github.ref_name == 'release/v1.14.5' }}
+          NPM_PROJECT_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
+          cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
+          echo "@data2evidence:registry=${NPM_PUBLISH_REGISTRY}" > ./.npmrc
+          REG_URL="${NPM_PUBLISH_REGISTRY%/}"
+          REG_HOST="${REG_URL#https://}"
+          echo "//${REG_HOST}/:_authToken=${NPM_PROJECT_TOKEN}" >> ./.npmrc
           if [[ "${SHOULD_PUBLISH}" == "true" ]]; then
-            npm publish --registry "${NPM_PUBLISH_REGISTRY}"
+            ${{ matrix.NPM || 'npm' }} publish
           else
-            npm pack
+            ${{ matrix.NPM || 'npm' }} pack
           fi
