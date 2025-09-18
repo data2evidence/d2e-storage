@@ -120,16 +120,16 @@ jobs:
           fi
           cd ${{ matrix.PKGPATH }}
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NPM_PROJECT_TOKEN}" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ./.npmrc
           deno install --allow-scripts
           node ./install-deno-deps.js ${{ matrix.PKGPATH }} || true
         env:
-          NPM_PROJECT_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Node dependencies
         run: npm ci --ignore-scripts
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update version
         run: |
@@ -149,7 +149,7 @@ jobs:
       - name: Prepare DEST (Trex layout) and build with Trex
         if: ${{ matrix.DESTPATH }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd ${{ matrix.PKGPATH }}
           cp package.json package.org.json
