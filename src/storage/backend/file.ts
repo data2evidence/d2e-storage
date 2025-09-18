@@ -1,4 +1,10 @@
-import * as xattr from 'fs-xattr'
+let xattr: any = null
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  xattr = require('fs-xattr')
+} catch {
+  xattr = null
+}
 import fs from 'fs-extra'
 import path from 'path'
 import fileChecksum from 'md5-file'
@@ -484,13 +490,31 @@ export class FileBackend implements StorageBackendAdapter {
     } as FileMetadata
   }
 
-  protected getMetadataAttr(file: string, attribute: string): Promise<string | undefined> {
-    return xattr.get(file, attribute).then((value: any) => {
-      return value?.toString() ?? undefined
-    })
+  protected async getMetadataAttr(file: string, attribute: string): Promise<string | undefined> {
+    if (xattr) {
+      return xattr.get(file, attribute).then((value: any) => value?.toString() ?? undefined)
+    }
+    try {
+      const meta = await fs.readFile(`${file}.meta.json`, 'utf-8')
+      const parsed = JSON.parse(meta)
+      return parsed?.[attribute]
+    } catch {
+      return undefined
+    }
   }
 
-  protected setMetadataAttr(file: string, attribute: string, value: string): Promise<void> {
-    return xattr.set(file, attribute, value)
+  protected async setMetadataAttr(file: string, attribute: string, value: string): Promise<void> {
+    if (xattr) {
+      return xattr.set(file, attribute, value)
+    }
+    let parsed: Record<string, string> = {}
+    try {
+      const meta = await fs.readFile(`${file}.meta.json`, 'utf-8')
+      parsed = JSON.parse(meta) || {}
+    } catch {
+      parsed = {}
+    }
+    parsed[attribute] = value
+    await fsExtra.outputFile(`${file}.meta.json`, JSON.stringify(parsed))
   }
 }

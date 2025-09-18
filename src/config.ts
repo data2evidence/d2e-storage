@@ -180,10 +180,10 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       ? ''
       : getOptionalConfigFromEnv('PROJECT_REF') ||
         getOptionalConfigFromEnv('TENANT_ID') ||
-        'storage-single-tenant',
+        'stub',
 
     // Server
-    region: getOptionalConfigFromEnv('SERVER_REGION', 'REGION') || 'not-specified',
+    region: getOptionalConfigFromEnv('SERVER_REGION', 'REGION') || 'stub',
     version: getOptionalConfigFromEnv('VERSION') || '0.0.0',
     keepAliveTimeout: parseInt(getOptionalConfigFromEnv('SERVER_KEEP_ALIVE_TIMEOUT') || '61', 10),
     headersTimeout: parseInt(getOptionalConfigFromEnv('SERVER_HEADERS_TIMEOUT') || '65', 10),
@@ -222,8 +222,9 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
     jwtAlgorithm: getOptionalConfigFromEnv('AUTH_JWT_ALGORITHM', 'PGRST_JWT_ALGORITHM') || 'HS256',
 
     // Upload
-    uploadFileSizeLimit: Number(
-      getOptionalConfigFromEnv('UPLOAD_FILE_SIZE_LIMIT', 'FILE_SIZE_LIMIT')
+    uploadFileSizeLimit: parseInt(
+      getOptionalConfigFromEnv('UPLOAD_FILE_SIZE_LIMIT', 'FILE_SIZE_LIMIT') || '52428800',
+      10
     ),
     uploadFileSizeLimitStandard: parseInt(
       getOptionalConfigFromEnv(
@@ -264,13 +265,13 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       'S3_PROTOCOL_NON_CANONICAL_HOST_HEADER'
     ),
     // Storage
-    storageBackendType: getOptionalConfigFromEnv('STORAGE_BACKEND') as StorageBackendType,
+    storageBackendType:
+      ((getOptionalConfigFromEnv('STORAGE_BACKEND') as StorageBackendType) || 'file'),
 
     // Storage - File
-    storageFilePath: getOptionalConfigFromEnv(
-      'STORAGE_FILE_BACKEND_PATH',
-      'FILE_STORAGE_BACKEND_PATH'
-    ),
+    storageFilePath:
+      getOptionalConfigFromEnv('STORAGE_FILE_BACKEND_PATH', 'FILE_STORAGE_BACKEND_PATH') ||
+      '/var/lib/storage',
 
     // Storage - S3
     storageS3MaxSockets: parseInt(
