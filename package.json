@@ -123,7 +123,7 @@
     "functions": {
       "init": [
         {
-          "function": "/src",
+          "function": "/src/app.ts",
           "imports": "/deno.json",
           "env": "d2e-supabase-storage"
         }
@@ -131,7 +131,7 @@
       "api": [
         {
           "source": "/fhir-server",
-          "function": "/src",
+          "function": "/src/app.ts",
           "env": "d2e-supabase-storage",
           "imports": "/deno.json"
         }
