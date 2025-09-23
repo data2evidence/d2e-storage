@@ -129,7 +129,7 @@
       ],
       "api": [
         {
-          "source": "/fhir-server",
+          "source": "/supabase-storage",
           "function": "/src",
           "env": "d2e-supabase-storage",
           "imports": "/deno.json"
