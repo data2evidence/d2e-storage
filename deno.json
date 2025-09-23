@@ -31,6 +31,7 @@
     "string_decoder": "node:string_decoder",
     "timers": "node:timers",
     "timers/promises": "node:timers/promises",
+    "stream/promises": "node:stream/promises",
     "@internal/": "./src/internal/",
     "@storage/": "./src/storage/",
     "@grpc/grpc-js": "npm:@grpc/grpc-js",
