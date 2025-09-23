@@ -53,6 +53,7 @@
     "form-data": "npm:form-data",
     "json-schema-to-ts": "npm:json-schema-to-ts",
     "stream-buffers": "npm:stream-buffers",
-    "dotenv": "npm:dotenv"
+    "dotenv": "npm:dotenv",
+    "sql-template-strings": "npm:sql-template-strings"
   }
 }
