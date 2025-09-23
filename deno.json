@@ -16,6 +16,8 @@
     "events": "node:events",
     "url": "node:url",
     "http": "node:http",
-    "https": "node:https"
+    "https": "node:https",
+    "@internal/": "./src/internal/",
+    "@storage/": "./src/storage/"
   }
 }
