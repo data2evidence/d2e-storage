@@ -1,4 +1,5 @@
 {
+  "workspace": [],
   "nodeModulesDir": "auto",
   "unstable": ["detect-cjs", "node-globals", "sloppy-imports"],
   "compilerOptions": {
