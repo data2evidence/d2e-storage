@@ -1,4 +1,3 @@
-import * as xattr from 'fs-xattr'
 import fs from 'fs-extra'
 import path from 'path'
 import fileChecksum from 'md5-file'
@@ -485,12 +484,10 @@ export class FileBackend implements StorageBackendAdapter {
   }
 
   protected getMetadataAttr(file: string, attribute: string): Promise<string | undefined> {
-    return xattr.get(file, attribute).then((value: any) => {
-      return value?.toString() ?? undefined
-    })
+    return Promise.resolve('')
   }
 
   protected setMetadataAttr(file: string, attribute: string, value: string): Promise<void> {
-    return xattr.set(file, attribute, value)
+    return Promise.resolve()
   }
 }
