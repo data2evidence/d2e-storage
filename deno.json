@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "fs": "node:fs",
+    "fs/promises": "node:fs/promises",
+    "path": "node:path",
+    "crypto": "node:crypto",
+    "util": "node:util",
+    "stream": "node:stream",
+    "buffer": "node:buffer",
+    "events": "node:events",
+    "url": "node:url",
+    "http": "node:http",
+    "https": "node:https"
+  },
+  "nodeModulesDir": true
+}
+
