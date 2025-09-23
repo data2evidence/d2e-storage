@@ -1,4 +1,9 @@
 {
+  "nodeModulesDir": "auto",
+  "unstable": ["detect-cjs", "node-globals", "sloppy-imports"],
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "deno.ns", "deno.unstable"]
+  },
   "imports": {
     "fs": "node:fs",
     "fs/promises": "node:fs/promises",
@@ -11,7 +16,5 @@
     "url": "node:url",
     "http": "node:http",
     "https": "node:https"
-  },
-  "nodeModulesDir": true
+  }
 }
-
