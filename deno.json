@@ -95,6 +95,7 @@
     "stream-buffers": "npm:stream-buffers",
     "dotenv": "npm:dotenv",
     "xml2js": "npm:xml2js",
-    "sql-template-strings": "npm:sql-template-strings"
+    "sql-template-strings": "npm:sql-template-strings",
+    "/var/tmp/sb-compile-trex/storage/src/": "./src/"
   }
 }
