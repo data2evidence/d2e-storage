@@ -122,7 +122,7 @@
     "functions": {
       "init": [],
       "api": [
-        { "source": "/supabase-storage", "function": "/plugin/api/mod.ts", "imports": "/deno.json", "env": "d2e-supabase-storage" }
+        { "source": "/supabase-storage", "function": "/src", "imports": "/deno.json", "env": "d2e-supabase-storage" }
       ],
        "env": { 
           "d2e-supabase-storage": {
