@@ -120,20 +120,9 @@
   "bin": "./dist/server.js",
   "trex": {
     "functions": {
-      "init": [
-        {
-          "function": "/src",
-          "imports": "/deno.json",
-          "env": "d2e-supabase-storage"
-        }
-      ],
+      "init": [],
       "api": [
-        {
-          "source": "/supabase-storage",
-          "function": "/src",
-          "env": "d2e-supabase-storage",
-          "imports": "/deno.json"
-        }
+        { "source": "/supabase-storage", "function": "/plugin/api/mod.ts", "imports": "/deno.json", "env": "d2e-supabase-storage" }
       ],
        "env": { 
           "d2e-supabase-storage": {
