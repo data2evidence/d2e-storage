@@ -105,6 +105,7 @@
     "dotenv": "npm:dotenv",
     "xml2js": "npm:xml2js",
     "sql-template-strings": "npm:sql-template-strings",
+    "@internal/monitoring/otel": "./src/internal/monitoring/otel.ts",
     "/var/tmp/sb-compile-trex/storage/src/internal/monitoring/otel": "./src/internal/monitoring/otel.ts",
     "/var/tmp/sb-compile-trex/storage/src/app": "./src/app.ts",
     "/var/tmp/sb-compile-trex/storage/src/admin-app": "./src/admin-app.ts",
