@@ -146,25 +146,20 @@
       },
       "roles": {
         "ALP_SYSTEM_ADMIN": [
-          "fhir.server.admin"
-        ],
-        "IDP_ALP_DATA_CLIENT_ID": [
-          "fhir.server.admin"
+          "portal.supabaseStorage.read",
+          "portal.supabaseStorage.write",
+          "portal.supabaseStorage.delete"
         ]
       },
       "scopes": [
         {
-          "path": "^/fhir-server/(.*)",
+          "path": "^/supabase-storage(.*)",
           "scopes": [
-            "fhir.server.admin"
+            "portal.supabaseStorage.read",
+            "portal.supabaseStorage.write",
+            "portal.supabaseStorage.delete"
           ],
-          "httpMethods": [
-            "POST",
-            "GET",
-            "PUT",
-            "PATCH",
-            "DELETE"
-          ]
+          "httpMethods": ["GET","POST","DELETE","PUT","PATCH"]
         }
       ]
     }
