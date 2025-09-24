@@ -162,6 +162,9 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
+          # Ensure workspace-local import map so Trex/Deno sees config inside workspace
+          cp node_modules/@data2evidence/storage/deno.json ./deno.json || true
+          [ -f import_map.json ] || cp deno.json import_map.json
           export TREX_DOCKER_TAG=sha256:468f1fa411b288f8ebac842dc0982bb7b8cb2d5eeb8dc25a494b734fcacfac42
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
