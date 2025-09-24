@@ -61,6 +61,7 @@
     "pg-listen": "npm:pg-listen",
     "postgres-migrations": "npm:postgres-migrations",
     "pino": "npm:pino",
+    "hono": "npm:hono@4",
     "pino-logflare": "npm:pino-logflare",
     "prom-client": "npm:prom-client",
     "fastify": "npm:fastify",

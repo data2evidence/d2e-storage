@@ -1,5 +1,5 @@
 // Minimal Hono worker to verify routing under Trex
-import { Hono } from "npm:hono@4"
+import { Hono } from "hono"
 
 const app = new Hono()
 
