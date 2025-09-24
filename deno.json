@@ -117,6 +117,7 @@
     "/var/tmp/sb-compile-trex/storage/src/config": "./src/config.ts",
     "/var/tmp/sb-compile-trex/storage/src/http/error-handler": "./src/http/error-handler.ts",
     "/var/tmp/sb-compile-trex/storage/src/http/index": "./src/http/index.ts",
+    "/var/tmp/sb-compile-trex/storage/src/http": "./src/http/index.ts",
     "/var/tmp/sb-compile-trex/storage/src/http/plugins/apikey": "./src/http/plugins/apikey.ts",
     "/var/tmp/sb-compile-trex/storage/src/http/plugins/db": "./src/http/plugins/db.ts",
     "/var/tmp/sb-compile-trex/storage/src/http/plugins/index": "./src/http/plugins/index.ts",
