@@ -1,1 +1,1 @@
-import './start/server';
+export {}
