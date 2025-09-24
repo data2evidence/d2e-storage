@@ -138,6 +138,11 @@
           "portal.supabaseStorage.read",
           "portal.supabaseStorage.write",
           "portal.supabaseStorage.delete"
+        ],
+        "IDP_ALP_DATA_CLIENT_ID": [
+          "portal.supabaseStorage.read", 
+          "portal.supabaseStorage.write", 
+          "portal.supabaseStorage.delete"
         ]
       },
       "scopes": [
