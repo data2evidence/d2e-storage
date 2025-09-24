@@ -156,11 +156,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd ${{ matrix.PKGPATH }}
-          cp package.json package.org.json
           sudo mkdir -p ${{ matrix.DESTPATH }}
           sudo chown runner:docker ${{ matrix.DESTPATH }}
-          cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
           # Ensure workspace-local import map so Trex/Deno sees config inside workspace
           # Write a workspace-local deno.json without a workspace key
@@ -201,7 +198,7 @@ jobs:
           SHOULD_PUBLISH: ${{ github.ref_name == 'develop' || startsWith(github.ref_name, 'release/') || github.event_name == 'workflow_dispatch' || github.ref_name == 'hengxian-jiang/npm_pkg_pub' || github.ref_name == 'release/v1.14.5' }}
           NPM_PROJECT_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
-          cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
+          cd ${{ matrix.PKGPATH }}
           echo "@data2evidence:registry=${NPM_PUBLISH_REGISTRY}" > ./.npmrc
           REG_URL="${NPM_PUBLISH_REGISTRY%/}"
           REG_HOST="${REG_URL#https://}"
