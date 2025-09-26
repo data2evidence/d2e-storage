@@ -216,6 +216,7 @@
     "@internal/monitoring/logflare": "./src/internal/monitoring/logflare.ts",
     "@internal/monitoring/logger": "./src/internal/monitoring/logger.ts",
     "@internal/monitoring/metrics": "./src/internal/monitoring/metrics.ts",
+    "/var/tmp/sb-compile-trex/storage/src/internal/monitoring/otel-instrumentation": "./src/internal/monitoring/otel-instrumentation.ts",
     "@internal/monitoring/otel-instrumentation": "./src/internal/monitoring/otel-instrumentation.ts",
     "@internal/monitoring/otel-processor": "./src/internal/monitoring/otel-processor.ts",
     "@internal/pubsub/adapter": "./src/internal/pubsub/adapter.ts",
