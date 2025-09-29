@@ -1,5 +1,5 @@
 import pg, { DatabaseError } from 'pg'
-import { Knex, knex } from 'knex'
+import knex, { Knex } from 'knex'
 import { JwtPayload } from 'jsonwebtoken'
 import retry from 'async-retry'
 import TTLCache from '@isaacs/ttlcache'
