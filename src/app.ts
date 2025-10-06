@@ -15,9 +15,9 @@ const build = (opts: buildOpts = {}): FastifyInstance => {
     const fastifyOpts = {
       ...opts,
       logger: opts.logger === undefined ? true : opts.logger,  // Default to true if not specified
-      // Rewrite the URL to remove the /supabase-storage-f prefix
+      // Rewrite the URL to remove the /supabase-storage prefix
       rewriteUrl: (req) => {
-        const prefix = '/supabase-storage-f'
+        const prefix = '/supabase-storage'
         if (req.url && req.url.startsWith(prefix)) {
           const newUrl = req.url.substring(prefix.length) || '/'
           console.log('Rewriting URL:', req.url, '→', newUrl)
