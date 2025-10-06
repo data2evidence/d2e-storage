@@ -151,14 +151,14 @@ export class ObjectStorage {
       return obj
     })
 
-    await ObjectRemoved.sendWebhook({
-      tenant: this.db.tenant(),
-      name: objectName,
-      version: obj.version,
-      bucketId: this.bucketId,
-      reqId: this.db.reqId,
-      metadata: obj.metadata,
-    })
+    // await ObjectRemoved.sendWebhook({
+    //   tenant: this.db.tenant(),
+    //   name: objectName,
+    //   version: obj.version,
+    //   bucketId: this.bucketId,
+    //   reqId: this.db.reqId,
+    //   metadata: obj.metadata,
+    // })
   }
 
   /**
@@ -200,18 +200,18 @@ export class ObjectStorage {
 
           await this.backend.deleteObjects(storageS3Bucket, prefixesToDelete)
 
-          await Promise.allSettled(
-            data.map((object) =>
-              ObjectRemoved.sendWebhook({
-                tenant: db.tenant(),
-                name: object.name,
-                bucketId: this.bucketId,
-                reqId: this.db.reqId,
-                version: object.version,
-                metadata: object.metadata,
-              })
-            )
-          )
+          // await Promise.allSettled(
+          //   data.map((object) =>
+          //     ObjectRemoved.sendWebhook({
+          //       tenant: db.tenant(),
+          //       name: object.name,
+          //       bucketId: this.bucketId,
+          //       reqId: this.db.reqId,
+          //       version: object.version,
+          //       metadata: object.metadata,
+          //     })
+          //   )
+          // )
         }
       })
     }
@@ -229,14 +229,14 @@ export class ObjectStorage {
 
     const result = await this.db.updateObjectMetadata(this.bucketId, objectName, metadata)
 
-    await ObjectUpdatedMetadata.sendWebhook({
-      tenant: this.db.tenant(),
-      name: objectName,
-      version: result.version,
-      bucketId: this.bucketId,
-      metadata,
-      reqId: this.db.reqId,
-    })
+    // await ObjectUpdatedMetadata.sendWebhook({
+    //   tenant: this.db.tenant(),
+    //   name: objectName,
+    //   version: result.version,
+    //   bucketId: this.bucketId,
+    //   metadata,
+    //   reqId: this.db.reqId,
+    // })
 
     return result
   }
@@ -376,14 +376,14 @@ export class ObjectStorage {
         return destinationObject
       })
 
-      await ObjectCreatedCopyEvent.sendWebhook({
-        tenant: this.db.tenant(),
-        name: destinationKey,
-        version: newVersion,
-        bucketId: this.bucketId,
-        metadata,
-        reqId: this.db.reqId,
-      })
+      // await ObjectCreatedCopyEvent.sendWebhook({
+      //   tenant: this.db.tenant(),
+      //   name: destinationKey,
+      //   version: newVersion,
+      //   bucketId: this.bucketId,
+      //   metadata,
+      //   reqId: this.db.reqId,
+      // })
 
       return {
         destObject: destinationObject,
@@ -487,30 +487,30 @@ export class ObjectStorage {
           reqId: this.db.reqId,
         })
 
-        await Promise.allSettled([
-          ObjectRemovedMove.sendWebhook({
-            tenant: this.db.tenant(),
-            name: sourceObjectName,
-            bucketId: this.bucketId,
-            reqId: this.db.reqId,
-            version: sourceObject.version,
-            metadata: sourceObject.metadata,
-          }),
-          ObjectCreatedMove.sendWebhook({
-            tenant: this.db.tenant(),
-            name: destinationObjectName,
-            version: newVersion,
-            bucketId: this.bucketId,
-            metadata: metadata,
-            oldObject: {
-              name: sourceObjectName,
-              bucketId: this.bucketId,
-              reqId: this.db.reqId,
-              version: sourceObject.version,
-            },
-            reqId: this.db.reqId,
-          }),
-        ])
+        // await Promise.allSettled([
+        //   ObjectRemovedMove.sendWebhook({
+        //     tenant: this.db.tenant(),
+        //     name: sourceObjectName,
+        //     bucketId: this.bucketId,
+        //     reqId: this.db.reqId,
+        //     version: sourceObject.version,
+        //     metadata: sourceObject.metadata,
+        //   }),
+        //   ObjectCreatedMove.sendWebhook({
+        //     tenant: this.db.tenant(),
+        //     name: destinationObjectName,
+        //     version: newVersion,
+        //     bucketId: this.bucketId,
+        //     metadata: metadata,
+        //     oldObject: {
+        //       name: sourceObjectName,
+        //       bucketId: this.bucketId,
+        //       reqId: this.db.reqId,
+        //       version: sourceObject.version,
+        //     },
+        //     reqId: this.db.reqId,
+        //   }),
+        // ])
 
         return {
           destObject: {
