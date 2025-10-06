@@ -15,6 +15,7 @@ export class FileStore extends TusFileStore {
   protected fileAdapter: FileBackend
 
   constructor(protected readonly options: FileStoreOptions) {
+    fsExtra.ensureDirSync(options.directory, 0o755)
     super(options)
     this.fileAdapter = new FileBackend()
   }

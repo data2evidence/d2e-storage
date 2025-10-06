@@ -218,8 +218,8 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
     anonKey: getOptionalConfigFromEnv('ANON_KEY') || '',
 
     encryptionKey: getOptionalConfigFromEnv('AUTH_ENCRYPTION_KEY', 'ENCRYPTION_KEY') || '',
-    jwtSecret: getOptionalIfMultitenantConfigFromEnv('AUTH_JWT_SECRET', 'PGRST_JWT_SECRET') || '',
-    jwtAlgorithm: getOptionalConfigFromEnv('AUTH_JWT_ALGORITHM', 'PGRST_JWT_ALGORITHM') || 'HS256',
+    jwtSecret: getOptionalConfigFromEnv('JWT_SECRET') || '',
+    jwtAlgorithm: getOptionalConfigFromEnv('JWT_ALGORITHM') || 'HS256',
 
     // Upload
     uploadFileSizeLimit: parseInt(
@@ -271,7 +271,7 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
     // Storage - File
     storageFilePath:
       getOptionalConfigFromEnv('STORAGE_FILE_BACKEND_PATH', 'FILE_STORAGE_BACKEND_PATH') ||
-      '/var/lib/storage',
+      '/usr/src/data/storage',
 
     // Storage - S3
     storageS3MaxSockets: parseInt(
@@ -305,7 +305,7 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       'MULTITENANT_DATABASE_URL'
     ),
     databaseSSLRootCert: getOptionalConfigFromEnv('DATABASE_SSL_ROOT_CERT'),
-    databaseURL: getOptionalIfMultitenantConfigFromEnv('DATABASE_URL') || '',
+    databaseURL: getOptionalConfigFromEnv('DATABASE_URL'),
     databasePoolURL: getOptionalConfigFromEnv('DATABASE_POOL_URL') || '',
     databaseMaxConnections: parseInt(
       getOptionalConfigFromEnv('DATABASE_MAX_CONNECTIONS') || '20',

@@ -8,33 +8,33 @@ import http from 'http'
  * @param serverSignal
  */
 export function bindShutdownSignals(serverSignal: AsyncAbortController) {
-  // Register handlers
-  process.on('uncaughtException', (e) => {
-    logSchema.error(logger, 'uncaught exception', {
-      type: 'uncaughtException',
-      error: e,
-    })
-    process.exit(1)
-  })
+  // // Register handlers
+  // process.on('uncaughtException', (e) => {
+  //   logSchema.error(logger, 'uncaught exception', {
+  //     type: 'uncaughtException',
+  //     error: e,
+  //   })
+  //   process.exit(1)
+  // })
 
-  // Shutdown handler
-  process.on('SIGTERM', async () => {
-    logSchema.info(logger, '[Server] Received SIGTERM, shutting down', {
-      type: 'shutdown',
-    })
-    try {
-      await shutdown(serverSignal)
-      logSchema.info(logger, '[Server] SIGTERM Shutdown successfully', {
-        type: 'shutdown',
-      })
-    } catch (e) {
-      logSchema.error(logger, '[Server] SIGTERM Shutdown with error', {
-        type: 'shutdown',
-        error: e,
-      })
-      process.exit(1)
-    }
-  })
+  // // Shutdown handler
+  // process.on('SIGTERM', async () => {
+  //   logSchema.info(logger, '[Server] Received SIGTERM, shutting down', {
+  //     type: 'shutdown',
+  //   })
+  //   try {
+  //     await shutdown(serverSignal)
+  //     logSchema.info(logger, '[Server] SIGTERM Shutdown successfully', {
+  //       type: 'shutdown',
+  //     })
+  //   } catch (e) {
+  //     logSchema.error(logger, '[Server] SIGTERM Shutdown with error', {
+  //       type: 'shutdown',
+  //       error: e,
+  //     })
+  //     process.exit(1)
+  //   }
+  // })
 }
 
 /**

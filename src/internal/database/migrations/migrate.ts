@@ -1,4 +1,6 @@
 import { Client, ClientConfig } from 'pg'
+import { fileURLToPath } from 'url'
+import * as path from "jsr:@std/path@^1.0.0"
 import SQL from 'sql-template-strings'
 import { loadMigrationFiles, MigrationError } from 'postgres-migrations'
 import { getConfig, MultitenantMigrationStrategy } from '../../../config'
@@ -28,7 +30,24 @@ const {
 } = getConfig()
 
 const loadMigrationFilesCached = memoizePromise(loadMigrationFiles)
+// /usr/src/plugins/d2ef/storage/migrations/tenant
 
+// Resolve migrations directories relative to this module file
+// const TENANT_MIGRATIONS_DIR = fileURLToPath(new URL('../../../../migrations/tenant', import.meta.url))
+const TENANT_MIGRATIONS_DIR = path.join(
+  path
+    .dirname(path.fromFileUrl(import.meta.url))
+    .replace(/\/usr\/src/, ".")
+    .replace(
+      /\/var\/tmp\/sb-compile-trex/,
+      Deno.env.get("TREX_FUNCTION_PATH") || "storage"
+    ),
+  "../../../../migrations/tenant"
+)
+console.log(TENANT_MIGRATIONS_DIR)
+const MULTITENANT_MIGRATIONS_DIR = fileURLToPath(
+  new URL('../../../../migrations/multitenant', import.meta.url)
+)
 /**
  * Migrations that were added after the initial release
  */
@@ -77,13 +96,13 @@ export function startAsyncMigrations(signal: AbortSignal) {
 }
 
 export async function lastMigrationName() {
-  const migrations = await loadMigrationFilesCached('./migrations/tenant')
+  const migrations = await loadMigrationFilesCached(TENANT_MIGRATIONS_DIR)
   return migrations[migrations.length - 1].name as keyof typeof DBMigration
 }
 
 export async function hasMissingSyncMigration(tenantId: string) {
   const { migrationVersion, migrationStatus } = await getTenantConfig(tenantId)
-  const migrations = await loadMigrationFilesCached('./migrations/tenant')
+  const migrations = await loadMigrationFilesCached(TENANT_MIGRATIONS_DIR)
 
   if (!migrationStatus) {
     return migrations.some((m) => {
@@ -159,7 +178,7 @@ export async function runMultitenantMigrations(): Promise<void> {
   })
   await connectAndMigrate({
     databaseUrl: multitenantDatabaseUrl,
-    migrationsDirectory: './migrations/multitenant',
+    migrationsDirectory: MULTITENANT_MIGRATIONS_DIR,
     shouldCreateStorageSchema: false,
     waitForLock: true,
   })
@@ -187,7 +206,7 @@ export async function runMigrationsOnTenant(
 
   await connectAndMigrate({
     databaseUrl,
-    migrationsDirectory: './migrations/tenant',
+    migrationsDirectory: TENANT_MIGRATIONS_DIR,
     ssl,
     shouldCreateStorageSchema: true,
     tenantId,

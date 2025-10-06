@@ -1,10 +1,11 @@
 import '@internal/monitoring/otel'
 import { FastifyInstance } from 'fastify'
 import { IncomingMessage, Server, ServerResponse } from 'node:http'
-
-import build from './app'
-import buildAdmin from './admin-app'
-import { getConfig } from './config'
+import { exit } from 'node:process';
+import process from 'node:process';
+import build from './app.ts'
+import buildAdmin from './admin-app.ts'
+import { getConfig } from './config.ts'
 import {
   runMultitenantMigrations,
   runMigrationsOnTenant,
@@ -17,7 +18,7 @@ import { Queue } from '@internal/queue'
 import { registerWorkers } from '@storage/events'
 import { AsyncAbortController } from '@internal/concurrency'
 
-import { bindShutdownSignals, createServerClosedPromise, shutdown } from './start/shutdown'
+import { bindShutdownSignals, createServerClosedPromise, shutdown } from './start/shutdown.ts'
 
 const shutdownSignal = new AsyncAbortController()
 
@@ -26,21 +27,29 @@ bindShutdownSignals(shutdownSignal)
 // Start API server
 main()
   .then(() => {
-    logSchema.info(logger, '[Server] Started Successfully', {
-      type: 'server',
-    })
+    // logSchema.info(logger, '[Server] Started Successfully', {
+    //   type: 'server',
+    // })
+    console.log('[Server] Started Successfully')
   })
   .catch(async (e) => {
-    logSchema.error(logger, 'Server not started with error', {
-      type: 'startupError',
-      error: e,
-    })
+    // logSchema.error(logger, 'Server not started with error', {
+    //   type: 'startupError',
+    //   error: e,
+    // })
+    console.error('Server not started with error', e)
 
     await shutdown(shutdownSignal)
-    process.exit(1)
+    // process.exit(1)
+    throw e
+    // exit(1)
+    // process.exitCode = 1
   })
-  .catch(() => {
-    process.exit(1)
+  .catch((e) => {
+    throw e
+    // Deno.exit(1)
+    // exit(1)
+    // process.exitCode = 1
   })
 
 /**
@@ -55,6 +64,7 @@ async function main() {
     await listenForTenantUpdate(PubSub)
   } else {
     await runMigrationsOnTenant(databaseURL)
+    console.log('Migrations on tenant db completed')
   }
 
   // Queue
@@ -76,7 +86,9 @@ async function main() {
   }
 
   // HTTP Server
+  console.log('Starting HTTP Server')
   const app = await httpServer(shutdownSignal.signal)
+  console.log('HTTP Server started')
 
   // HTTP Admin Server
   if (isMultitenant) {
@@ -90,27 +102,42 @@ async function main() {
  */
 async function httpServer(signal: AbortSignal) {
   const { exposeDocs, requestTraceHeader, port, host } = getConfig()
-
   const app: FastifyInstance<Server, IncomingMessage, ServerResponse> = build({
-    logger,
-    disableRequestLogging: true,
+    logger: true,
+    disableRequestLogging: false,
     exposeDocs,
     requestIdHeader: requestTraceHeader,
   })
 
+  // Add error handler to see what's actually failing
+  app.addHook('onError', async (request, reply, error) => {
+    console.error('=================================================')
+    console.error('ROUTE ERROR:', request.method, request.url)
+    console.error('ERROR MESSAGE:', error.message)
+    console.error('ERROR STACK:', error.stack)
+    console.error('=================================================')
+  })
+
+  // Catch unhandled errors in app creation
+  app.addHook('onReady', () => {
+    console.log('Fastify app is ready, routes registered successfully')
+  })
+
   const closePromise = createServerClosedPromise(app.server, () => {
-    logSchema.info(logger, '[Server] Exited', {
-      type: 'server',
-    })
+    // logSchema.info(logger, '[Server] Exited', {
+    //   type: 'server',
+    // })
+    console.log('[Server] Exited')
   })
 
   try {
     signal.addEventListener(
       'abort',
       async () => {
-        logSchema.info(logger, '[Server] Stopping', {
-          type: 'server',
-        })
+        // logSchema.info(logger, '[Server] Stopping', {
+        //   type: 'server',
+        // })
+        console.log('[Server] Stopping')
 
         await closePromise
       },
@@ -120,10 +147,11 @@ async function httpServer(signal: AbortSignal) {
 
     return app
   } catch (err) {
-    logSchema.error(logger, `Server failed to start`, {
-      type: 'serverStartError',
-      error: err,
-    })
+    // logSchema.error(logger, `Server failed to start`, {
+    //   type: 'serverStartError',
+    //   error: err,
+    // })
+    console.error(`Server failed to start`, err)
     throw err
   }
 }
@@ -141,7 +169,7 @@ async function httpAdminServer(
 
   const adminApp = buildAdmin(
     {
-      logger,
+      // logger,
       disableRequestLogging: true,
       requestIdHeader: adminRequestIdHeader,
     },
@@ -149,17 +177,19 @@ async function httpAdminServer(
   )
 
   const closePromise = createServerClosedPromise(adminApp.server, () => {
-    logSchema.info(logger, '[Admin Server] Exited', {
-      type: 'server',
-    })
+    // logSchema.info(logger, '[Admin Server] Exited', {
+    //   type: 'server',
+    // })
+    console.log('[Admin Server] Exited')
   })
 
   signal.addEventListener(
     'abort',
     async () => {
-      logSchema.info(logger, '[Admin Server] Stopping', {
-        type: 'server',
-      })
+      // logSchema.info(logger, '[Admin Server] Stopping', {
+      //   type: 'server',
+      // })
+      console.log('[Admin Server] Stopping')
 
       await closePromise
     },
@@ -169,10 +199,11 @@ async function httpAdminServer(
   try {
     await adminApp.listen({ port: adminPort, host, signal })
   } catch (err) {
-    logSchema.error(adminApp.log, 'Failed to start admin app', {
-      type: 'adminAppStartError',
-      error: err,
-    })
+    // logSchema.error(adminApp.log, 'Failed to start admin app', {
+    //   type: 'adminAppStartError',
+    //   error: err,
+    // })
+    console.error('Failed to start admin app', err)
     throw err
   }
   return adminApp
