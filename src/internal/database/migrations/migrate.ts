@@ -34,16 +34,34 @@ const loadMigrationFilesCached = memoizePromise(loadMigrationFiles)
 
 // Resolve migrations directories relative to this module file
 // const TENANT_MIGRATIONS_DIR = fileURLToPath(new URL('../../../../migrations/tenant', import.meta.url))
-const TENANT_MIGRATIONS_DIR = path.join(
-  path
-    .dirname(path.fromFileUrl(import.meta.url))
-    .replace(/\/usr\/src/, ".")
-    .replace(
-      /\/var\/tmp\/sb-compile-trex/,
-      Deno.env.get("TREX_FUNCTION_PATH") || "storage"
-    ),
-  "../../../../migrations/tenant"
-)
+// const TENANT_MIGRATIONS_DIR = path.join(
+//   path
+//     .dirname(path.fromFileUrl(import.meta.url))
+//     .replace(/\/usr\/src/, ".")
+//     .replace(
+//       /\/var\/tmp\/sb-compile-trex/,
+//       Deno.env.get("TREX_FUNCTION_PATH") || "storage"
+//     ),
+//   "../../../../migrations/tenant"
+// )
+const TENANT_MIGRATIONS_DIR = (() => {
+  const currentDir = path.dirname(path.fromFileUrl(import.meta.url))
+  
+  // Check if we're in the plugins directory structure
+  if (currentDir.includes('@data2evidence/storage')) {
+    // Extract package root - handle both node_modules and direct plugins path
+    const packageRoot = currentDir.includes('node_modules')
+      ? currentDir.split('node_modules/@data2evidence/storage')[0] + 'node_modules/@data2evidence/storage'
+      : currentDir.split('@data2evidence/storage')[0] + '@data2evidence/storage'
+    
+    const migrationsPath = path.join(packageRoot, 'migrations/tenant')
+    console.log('Package root:', packageRoot)
+    console.log('Migrations path:', migrationsPath)
+    return migrationsPath
+  }
+  
+  throw new Error('Could not resolve migrations directory')
+})()
 console.log(TENANT_MIGRATIONS_DIR)
 const MULTITENANT_MIGRATIONS_DIR = fileURLToPath(
   new URL('../../../../migrations/multitenant', import.meta.url)
