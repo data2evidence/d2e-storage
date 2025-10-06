@@ -44,24 +44,25 @@ const loadMigrationFilesCached = memoizePromise(loadMigrationFiles)
 //     ),
 //   "../../../../migrations/tenant"
 // )
-const TENANT_MIGRATIONS_DIR = (() => {
-  const currentDir = path.dirname(path.fromFileUrl(import.meta.url))
+// const TENANT_MIGRATIONS_DIR = (() => {
+//   const currentDir = path.dirname(path.fromFileUrl(import.meta.url))
   
-  // Check if we're in the plugins directory structure
-  if (currentDir.includes('@data2evidence/storage')) {
-    // Extract package root - handle both node_modules and direct plugins path
-    const packageRoot = currentDir.includes('node_modules')
-      ? currentDir.split('node_modules/@data2evidence/storage')[0] + 'node_modules/@data2evidence/storage'
-      : currentDir.split('@data2evidence/storage')[0] + '@data2evidence/storage'
+//   // Check if we're in the plugins directory structure
+//   if (currentDir.includes('@data2evidence/storage')) {
+//     // Extract package root - handle both node_modules and direct plugins path
+//     const packageRoot = currentDir.includes('node_modules')
+//       ? currentDir.split('node_modules/@data2evidence/storage')[0] + 'node_modules/@data2evidence/storage'
+//       : currentDir.split('@data2evidence/storage')[0] + '@data2evidence/storage'
     
-    const migrationsPath = path.join(packageRoot, 'migrations/tenant')
-    console.log('Package root:', packageRoot)
-    console.log('Migrations path:', migrationsPath)
-    return migrationsPath
-  }
+//     const migrationsPath = path.join(packageRoot, 'migrations/tenant')
+//     console.log('Package root:', packageRoot)
+//     console.log('Migrations path:', migrationsPath)
+//     return migrationsPath
+//   }
   
-  throw new Error('Could not resolve migrations directory')
-})()
+//   throw new Error('Could not resolve migrations directory')
+// })()
+const TENANT_MIGRATIONS_DIR = '/usr/src/data/plugins/@data2evidence/storage/migrations/tenant'
 console.log(TENANT_MIGRATIONS_DIR)
 const MULTITENANT_MIGRATIONS_DIR = fileURLToPath(
   new URL('../../../../migrations/multitenant', import.meta.url)
