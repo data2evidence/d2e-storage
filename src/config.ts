@@ -218,7 +218,7 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
     anonKey: getOptionalConfigFromEnv('ANON_KEY') || '',
 
     encryptionKey: getOptionalConfigFromEnv('AUTH_ENCRYPTION_KEY', 'ENCRYPTION_KEY') || '',
-    jwtSecret: getOptionalConfigFromEnv('JWT_SECRET') || '',
+    jwtSecret: getOptionalConfigFromEnv('JWT_SECRET') || 'idePqsFt8wbvL6ZhivePjg93Ytdejysl07Afpgd6',
     jwtAlgorithm: getOptionalConfigFromEnv('JWT_ALGORITHM') || 'HS256',
 
     // Upload
