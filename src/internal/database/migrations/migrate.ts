@@ -62,7 +62,8 @@ const loadMigrationFilesCached = memoizePromise(loadMigrationFiles)
   
 //   throw new Error('Could not resolve migrations directory')
 // })()
-const TENANT_MIGRATIONS_DIR = '/usr/src/data/plugins/@data2evidence/storage/migrations/tenant'
+// const TENANT_MIGRATIONS_DIR = '/usr/src/data/plugins/@data2evidence/storage/migrations/tenant'
+const TENANT_MIGRATIONS_DIR = '/usr/src/data/plugins/node_modules/@data2evidence/storage/migrations/tenant'
 console.log(TENANT_MIGRATIONS_DIR)
 const MULTITENANT_MIGRATIONS_DIR = fileURLToPath(
   new URL('../../../../migrations/multitenant', import.meta.url)
