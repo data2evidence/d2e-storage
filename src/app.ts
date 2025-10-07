@@ -11,10 +11,9 @@ interface buildOpts extends FastifyServerOptions {
 const { version, keepAliveTimeout, headersTimeout, isMultitenant } = getConfig()
 
 const build = (opts: buildOpts = {}): FastifyInstance => {
-    // Override logger with simple config
     const fastifyOpts = {
       ...opts,
-      logger: opts.logger === undefined ? true : opts.logger,  // Default to true if not specified
+      logger: opts.logger === undefined ? true : opts.logger,
       // Rewrite the URL to remove the /supabase-storage prefix
       rewriteUrl: (req) => {
         const prefix = '/supabase-storage'
