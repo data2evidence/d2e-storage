@@ -47,8 +47,15 @@ const multiTenantLRUConfig = {
   updateAgeOnGet: true,
   checkAgeOnGet: true,
 }
+
+const singleTenantConfig = {
+  max: 1,
+  ttl: 1000 * 60,  // 1 minute timeout
+  updateAgeOnGet: true,
+  checkAgeOnGet: true,
+}
 export const connections = new TTLCache<string, Knex>({
-  ...(isMultitenant ? multiTenantLRUConfig : { max: 1, ttl: Infinity }),
+  ...(isMultitenant ? multiTenantLRUConfig : singleTenantConfig),
   dispose: async (pool) => {
     if (!pool) return
     try {
