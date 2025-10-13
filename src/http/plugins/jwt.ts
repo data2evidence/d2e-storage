@@ -26,30 +26,38 @@ export const jwt = fastifyPlugin(
     fastify.decorateRequest('jwtPayload', undefined)
 
     fastify.addHook('preHandler', async (request, reply) => {
-      request.jwt = (request.headers.authorization || '').replace(BEARER, '')
-
-      if (!request.jwt && request.routeConfig.allowInvalidJwt) {
-        request.jwtPayload = { role: 'anon' }
-        request.isAuthenticated = false
-        return
+      // Skip JWT validation for all endpoints
+      request.isAuthenticated = true
+      request.jwtPayload = { 
+        role: 'service_role',  // Change from 'anon' to 'service_role'
+        sub: 'system-user'     // Add a subject/user ID
       }
+      request.owner = 'system-user'
+      return
+      // request.jwt = (request.headers.authorization || '').replace(BEARER, '')
 
-      const { secret, jwks } = await getJwtSecret(request.tenantId)
+      // if (!request.jwt && request.routeConfig?.allowInvalidJwt) {
+      //   request.jwtPayload = { role: 'anon' }
+      //   request.isAuthenticated = false
+      //   return
+      // }
 
-      try {
-        const payload = await verifyJWT(request.jwt, secret, jwks || null)
-        request.jwtPayload = payload
-        request.owner = payload.sub
-        request.isAuthenticated = true
-      } catch (err: any) {
-        request.jwtPayload = { role: 'anon' }
-        request.isAuthenticated = false
+      // const { secret, jwks } = await getJwtSecret(request.tenantId)
 
-        if (request.routeConfig.allowInvalidJwt) {
-          return
-        }
-        throw ERRORS.AccessDenied(err.message, err)
-      }
+      // try {
+      //   const payload = await verifyJWT(request.jwt, secret, jwks || null)
+      //   request.jwtPayload = payload
+      //   request.owner = payload.sub
+      //   request.isAuthenticated = true
+      // } catch (err: any) {
+      //   request.jwtPayload = { role: 'anon' }
+      //   request.isAuthenticated = false
+
+      //   if (request.routeConfig?.allowInvalidJwt) {
+      //     return
+      //   }
+      //   throw ERRORS.AccessDenied(err.message, err)
+      // }
     })
   },
   { name: 'auth-jwt' }

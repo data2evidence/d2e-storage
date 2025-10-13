@@ -118,14 +118,14 @@ interface RouteOptions<S extends JSONSchema> {
 export class Router<Context = unknown, S extends Schema = Schema> {
   protected _routes: Map<string, Route<S, Context>[]> = new Map<string, Route<S, Context>[]>()
 
-  protected ajv = new Ajv({
-    coerceTypes: 'array',
-    useDefaults: true,
-    removeAdditional: true,
-    uriResolver: require('fast-uri'),
-    addUsedSchema: false,
-    allErrors: false,
-  })
+  // protected ajv = new Ajv({
+  //   coerceTypes: 'array',
+  //   useDefaults: true,
+  //   removeAdditional: true,
+  //   uriResolver: require('fast-uri'),
+  //   addUsedSchema: false,
+  //   allErrors: false,
+  // })
 
   registerRoute<R extends S = S>(
     method: HTTPMethod,
@@ -174,34 +174,34 @@ export class Router<Context = unknown, S extends Schema = Schema> {
       }
     })
 
-    this.ajv.addSchema(
-      {
-        type: 'object',
-        properties: schemaToCompile,
-        required: required.filter(Boolean),
-      },
-      method + url
-    )
+    // this.ajv.addSchema(
+    //   {
+    //     type: 'object',
+    //     properties: schemaToCompile,
+    //     required: required.filter(Boolean),
+    //   },
+    //   method + url
+    // )
 
-    const newRoute: Route<R, Context> = {
-      method: method as HTTPMethod,
-      path: normalizedUrl,
-      querystringMatches: query,
-      headersMatches: headers,
-      schema: schema,
-      compiledSchema: () => this.ajv.getSchema(method + url) as ValidateFunction<JTDDataType<R>>,
-      handler: handler as Handler<R, Context>,
-      disableContentTypeParser: disableContentTypeParser,
-      operation,
-    } as const
+    // const newRoute: Route<R, Context> = {
+    //   method: method as HTTPMethod,
+    //   path: normalizedUrl,
+    //   querystringMatches: query,
+    //   headersMatches: headers,
+    //   schema: schema,
+    //   compiledSchema: () => this.ajv.getSchema(method + url) as ValidateFunction<JTDDataType<R>>,
+    //   handler: handler as Handler<R, Context>,
+    //   disableContentTypeParser: disableContentTypeParser,
+    //   operation,
+    // } as const
 
-    if (!existingPath) {
-      this._routes.set(normalizedUrl, [newRoute as unknown as Route<S, Context>])
-      return
-    }
+    // if (!existingPath) {
+    //   this._routes.set(normalizedUrl, [newRoute as unknown as Route<S, Context>])
+    //   return
+    // }
 
-    existingPath.push(newRoute as unknown as Route<S, Context>)
-    this._routes.set(normalizedUrl, existingPath)
+    // existingPath.push(newRoute as unknown as Route<S, Context>)
+    // this._routes.set(normalizedUrl, existingPath)
   }
 
   get<R extends S>(url: string, options: RouteOptions<R>, handler: Handler<R, Context>) {

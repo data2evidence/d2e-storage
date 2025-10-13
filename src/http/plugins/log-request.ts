@@ -59,7 +59,7 @@ export const logRequest = (options: RequestLoggerOptions) =>
         const resourceFromParams = Object.values(req.params || {}).join('/')
         const resources = getFirstDefined<string[]>(
           req.resources,
-          req.routeConfig.resources?.(req),
+          req.routeConfig?.resources?.(req),
           (req.raw as any).resources,
           resourceFromParams ? [resourceFromParams] : ([] as string[])
         )
@@ -73,7 +73,7 @@ export const logRequest = (options: RequestLoggerOptions) =>
         }
 
         req.resources = resources
-        req.operation = req.routeConfig.operation
+        req.operation = req.routeConfig?.operation
 
         if (req.operation) {
           trace.getActiveSpan()?.setAttribute('http.operation', req.operation.type)

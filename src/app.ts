@@ -11,7 +11,21 @@ interface buildOpts extends FastifyServerOptions {
 const { version, keepAliveTimeout, headersTimeout, isMultitenant } = getConfig()
 
 const build = (opts: buildOpts = {}): FastifyInstance => {
-  const app = fastify(opts)
+    const fastifyOpts = {
+      ...opts,
+      logger: opts.logger === undefined ? true : opts.logger,
+      // Rewrite the URL to remove the /supabase-storage prefix
+      rewriteUrl: (req) => {
+        const prefix = '/supabase-storage'
+        if (req.url && req.url.startsWith(prefix)) {
+          const newUrl = req.url.substring(prefix.length) || '/'
+          console.log('Rewriting URL:', req.url, '→', newUrl)
+          return newUrl
+        }
+        return req.url || '/'
+      }
+    }
+  const app = fastify(fastifyOpts)
 
   app.addContentTypeParser('*', function (request, payload, done) {
     done(null)
@@ -51,11 +65,11 @@ const build = (opts: buildOpts = {}): FastifyInstance => {
   app.addSchema(schemas.errorSchema)
 
   app.register(plugins.signals)
-  app.register(plugins.tenantId)
+  // app.register(plugins.tenantId)
   app.register(plugins.metrics({ enabledEndpoint: !isMultitenant }))
   app.register(plugins.tracing)
   app.register(plugins.logRequest({ excludeUrls: ['/status', '/metrics', '/health'] }))
-  app.register(routes.tus, { prefix: 'upload/resumable' })
+  // app.register(routes.tus, { prefix: 'upload/resumable' })
   app.register(routes.bucket, { prefix: 'bucket' })
   app.register(routes.object, { prefix: 'object' })
   app.register(routes.render, { prefix: 'render/image' })

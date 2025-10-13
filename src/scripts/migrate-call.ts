@@ -3,5 +3,6 @@ dotenv.config()
 
 import { runMigrationsOnTenant } from '@internal/database'
 ;(async () => {
-  await runMigrationsOnTenant(process.env.DATABASE_URL as string)
+  const _env = Deno.env.toObject();
+  await runMigrationsOnTenant(_env.DATABASE_URL as string)
 })()

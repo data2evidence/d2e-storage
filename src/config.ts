@@ -160,7 +160,7 @@ export function setEnvPaths(paths: string[]) {
 }
 
 export function mergeConfig(newConfig: Partial<StorageConfigType>) {
-  config = { ...config, ...(newConfig as Required<StorageConfigType>) }
+  config = { ...(config ?? ({} as StorageConfigType)), ...((newConfig ?? {}) as Required<StorageConfigType>) }
 }
 
 export function getConfig(options?: { reload?: boolean }): StorageConfigType {
@@ -180,10 +180,10 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       ? ''
       : getOptionalConfigFromEnv('PROJECT_REF') ||
         getOptionalConfigFromEnv('TENANT_ID') ||
-        'storage-single-tenant',
+        'stub',
 
     // Server
-    region: getOptionalConfigFromEnv('SERVER_REGION', 'REGION') || 'not-specified',
+    region: getOptionalConfigFromEnv('SERVER_REGION', 'REGION') || 'stub',
     version: getOptionalConfigFromEnv('VERSION') || '0.0.0',
     keepAliveTimeout: parseInt(getOptionalConfigFromEnv('SERVER_KEEP_ALIVE_TIMEOUT') || '61', 10),
     headersTimeout: parseInt(getOptionalConfigFromEnv('SERVER_HEADERS_TIMEOUT') || '65', 10),
@@ -218,12 +218,13 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
     anonKey: getOptionalConfigFromEnv('ANON_KEY') || '',
 
     encryptionKey: getOptionalConfigFromEnv('AUTH_ENCRYPTION_KEY', 'ENCRYPTION_KEY') || '',
-    jwtSecret: getOptionalIfMultitenantConfigFromEnv('AUTH_JWT_SECRET', 'PGRST_JWT_SECRET') || '',
-    jwtAlgorithm: getOptionalConfigFromEnv('AUTH_JWT_ALGORITHM', 'PGRST_JWT_ALGORITHM') || 'HS256',
+    jwtSecret: getOptionalConfigFromEnv('JWT_SECRET') || 'idePqsFt8wbvL6ZhivePjg93Ytdejysl07Afpgd6',
+    jwtAlgorithm: getOptionalConfigFromEnv('JWT_ALGORITHM') || 'HS256',
 
     // Upload
-    uploadFileSizeLimit: Number(
-      getOptionalConfigFromEnv('UPLOAD_FILE_SIZE_LIMIT', 'FILE_SIZE_LIMIT')
+    uploadFileSizeLimit: parseInt(
+      getOptionalConfigFromEnv('UPLOAD_FILE_SIZE_LIMIT', 'FILE_SIZE_LIMIT') || '52428800',
+      10
     ),
     uploadFileSizeLimitStandard: parseInt(
       getOptionalConfigFromEnv(
@@ -264,13 +265,13 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       'S3_PROTOCOL_NON_CANONICAL_HOST_HEADER'
     ),
     // Storage
-    storageBackendType: getOptionalConfigFromEnv('STORAGE_BACKEND') as StorageBackendType,
+    storageBackendType:
+      ((getOptionalConfigFromEnv('STORAGE_BACKEND') as StorageBackendType) || 'file'),
 
     // Storage - File
-    storageFilePath: getOptionalConfigFromEnv(
-      'STORAGE_FILE_BACKEND_PATH',
-      'FILE_STORAGE_BACKEND_PATH'
-    ),
+    storageFilePath:
+      getOptionalConfigFromEnv('STORAGE_FILE_BACKEND_PATH', 'FILE_STORAGE_BACKEND_PATH') ||
+      '/usr/src/data/storage',
 
     // Storage - S3
     storageS3MaxSockets: parseInt(
@@ -304,7 +305,7 @@ export function getConfig(options?: { reload?: boolean }): StorageConfigType {
       'MULTITENANT_DATABASE_URL'
     ),
     databaseSSLRootCert: getOptionalConfigFromEnv('DATABASE_SSL_ROOT_CERT'),
-    databaseURL: getOptionalIfMultitenantConfigFromEnv('DATABASE_URL') || '',
+    databaseURL: getOptionalConfigFromEnv('DATABASE_URL'),
     databasePoolURL: getOptionalConfigFromEnv('DATABASE_POOL_URL') || '',
     databaseMaxConnections: parseInt(
       getOptionalConfigFromEnv('DATABASE_MAX_CONNECTIONS') || '20',
