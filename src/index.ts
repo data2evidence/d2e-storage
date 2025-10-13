@@ -39,7 +39,7 @@ main()
     // })
     console.error('Server not started with error', e)
 
-    await shutdown(shutdownSignal)
+    // await shutdown(shutdownSignal)
     // process.exit(1)
     throw e
     // exit(1)
@@ -68,31 +68,31 @@ async function main() {
   }
 
   // Queue
-  if (pgQueueEnable) {
-    await Queue.start({
-      signal: shutdownSignal.nextGroup.signal,
-      registerWorkers: registerWorkers,
-    })
-  }
+  // if (pgQueueEnable) {
+  //   await Queue.start({
+  //     signal: shutdownSignal.nextGroup.signal,
+  //     registerWorkers: registerWorkers,
+  //   })
+  // }
 
   // Pubsub
-  await PubSub.start({
-    signal: shutdownSignal.nextGroup.signal,
-  })
+  // await PubSub.start({
+  //   signal: shutdownSignal.nextGroup.signal,
+  // })
 
   // Start async migrations background process
-  if (isMultitenant && pgQueueEnable) {
-    startAsyncMigrations(shutdownSignal.nextGroup.signal)
-  }
+  // if (isMultitenant && pgQueueEnable) {
+  //   startAsyncMigrations(shutdownSignal.nextGroup.signal)
+  // }
 
   // HTTP Server
   console.log('Starting HTTP Server')
-  const app = await httpServer(shutdownSignal.signal)
+  const app = httpServer(shutdownSignal.signal)
   console.log('HTTP Server started')
 
   // HTTP Admin Server
   if (isMultitenant) {
-    await httpAdminServer(app, shutdownSignal.signal)
+    httpAdminServer(app, shutdownSignal.signal)
   }
 }
 
@@ -100,7 +100,7 @@ async function main() {
  * Starts HTTP API Server
  * @param signal
  */
-async function httpServer(signal: AbortSignal) {
+function httpServer(signal: AbortSignal) {
   const { exposeDocs, requestTraceHeader, port, host } = getConfig()
   const app: FastifyInstance<Server, IncomingMessage, ServerResponse> = build({
     logger: true,
@@ -143,7 +143,7 @@ async function httpServer(signal: AbortSignal) {
       },
       { once: true }
     )
-    await app.listen({ port, host, signal })
+    app.listen({ port, host, signal })
 
     return app
   } catch (err) {
