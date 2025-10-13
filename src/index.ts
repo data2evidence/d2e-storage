@@ -138,8 +138,8 @@ function httpServer(signal: AbortSignal) {
         //   type: 'server',
         // })
         console.log('[Server] Stopping')
-
-        await closePromise
+        await app.close()
+        console.log('[Server] Exited')
       },
       { once: true }
     )
@@ -191,13 +191,15 @@ async function httpAdminServer(
       // })
       console.log('[Admin Server] Stopping')
 
-      await closePromise
+      await adminApp.close()
+      console.log('[Admin Server] Exited')
     },
     { once: true }
   )
 
   try {
-    await adminApp.listen({ port: adminPort, host, signal })
+    adminApp.listen({ port: adminPort, host, signal })
+    console.log('[Admin Server] Started')
   } catch (err) {
     // logSchema.error(adminApp.log, 'Failed to start admin app', {
     //   type: 'adminAppStartError',
